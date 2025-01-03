@@ -24,9 +24,6 @@ def wizard():
     # Save the original sys.argv
     original_argv = sys.argv
 
-    # For running pingmapper
-    module_name = "pingmapper"
-
     ##########################
     # Define the layout blocks
 
@@ -53,6 +50,9 @@ def wizard():
     pm_test_single_btn = sg.Button("Small\nDataset", key="test", button_color="navy", size=(10, 2))
     pm_test_batch_btn = sg.Button("Large\nDataset", key="test_large", size=(10, 2))
 
+    ## Update Installation Buttons
+    pm_install_text = sg.Text("Update\nPINGMapper", font=("Helvetica", 10, "bold"),size=(11, 2))
+    pm_install_btn = sg.Button("Update", key="pinginstaller", button_color="darkorange", size=(10, 2))
 
 
     #############
@@ -68,6 +68,7 @@ def wizard():
         # [pm_desc],
         [pm_gui_text, sg.VerticalSeparator(), pm_gui_btn, pm_batch_gui_btn],
         [pm_test_text, sg.VerticalSeparator(), pm_test_single_btn, pm_test_batch_btn],
+        [pm_install_text, sg.VerticalSeparator(), pm_install_btn],
         [sg.HorizontalSeparator()],
         [sg.HorizontalSeparator()],
         [exit_btn],
@@ -84,27 +85,38 @@ def wizard():
         event, values = window.read()
         if event == "exit_pingwizard" or event == "Submit":
             break
+    
 
         # Launch PINGMapper GUI
         if event == "launch_pingmapper_gui":
             print("Launching PINGMapper GUI...")
             # Set the arguments for the PINGMapper GUI
+            module_name = "pingmapper"
             module_args = ["gui"]
 
         elif event == "launch_pingmapper_batch_gui":
             print("Launching PINGMapper Batch GUI...")
             # Set the arguments for the PINGMapper Batch GUI
+            module_name = "pingmapper"
             module_args = ["gui_batch"]
 
         elif event == "test":
             print("Testing PINGMapper...")
             # Set the arguments for the PINGMapper GUI
+            module_name = "pingmapper"
             module_args = ["test"]
 
         elif event == "test_large":
             print("Testing PINGMapper Batch...")
             # Set the arguments for the PINGMapper Batch GUI
+            module_name = "pingmapper"
             module_args = ["test_large"]
+
+        elif event == "pinginstaller":
+            print("Updating PINGMapper...")
+            # Set the arguments for the PINGMapper Batch GUI
+            module_name = "pinginstaller"
+            module_args = []
 
         sys.argv = [module_name, *module_args]
 
