@@ -11,7 +11,11 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PACKAGE_DIR = os.path.dirname(SCRIPT_DIR)
 
 # Logo's
-pingmapper_logo = os.path.join(SCRIPT_DIR, "assets", "pingmapper_logo_small.png")
+env_dir = os.environ['CONDA_PREFIX']
+pingmapper_logo_name = "pingmapper_logo_small.png"
+pingmapper_logo = os.path.join(env_dir, 'pingmapper_config', pingmapper_logo_name)
+if not os.path.exists(pingmapper_logo):
+    pingmapper_logo = os.path.join(SCRIPT_DIR, "assets", pingmapper_logo_name)
 
 def wizard():
 
