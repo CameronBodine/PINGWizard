@@ -13,4 +13,10 @@ def main():
     wizard()
 
 if __name__ == "__main__":
-    main()
+
+    if len(sys.argv) == 1:
+        main()
+
+    elif sys.argv[1] == "shortcut":
+        from pingwizard.create_shortcut import create_shortcut
+        create_shortcut()
