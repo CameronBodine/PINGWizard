@@ -35,7 +35,7 @@ def wizard():
     pm_title = sg.Text("PINGMapper", font=("Helvetica", 16), justification="center")
     
     ## Description
-    pm_desc = sg.Text("PINGMapper - Open-source interface for processing recreation-grade side scan sonar datasets and reproducibly mapping benthic habitat.", font=("Helvetica", 12), justification="left", size=(30, 5))
+    pm_desc = sg.Text("PINGMapper - Open-source interface for processing recreation-grade side scan sonar datasets and reproducibly mapping benthic habitat.", font=("Helvetica", 10), justification="left", size=(30, 5))
 
     ## Logo
     pm_logo = sg.Image(pingmapper_logo, size=(200, 120))
