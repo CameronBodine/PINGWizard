@@ -46,7 +46,7 @@ def linux_shortcut(conda_env, conda_key, sh_file):
                "conda init\n"+\
                "\n\n"+\
                "echo Launching PINGWizard\n"+\
-               "conda run ping python -m pingwizard\n"
+               "conda run -n ping python -m pingwizard\n"
     
     print('\n\n', to_write)
 
