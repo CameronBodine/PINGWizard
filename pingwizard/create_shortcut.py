@@ -1,5 +1,6 @@
 
 import os, sys
+import platform
 
 from pathlib import Path
 home_path = os.path.join(Path.home())
@@ -24,20 +25,33 @@ def windows_shortcut(conda_env, conda_key, bat_file):
 
     return
 
-def linux_shortcut(conda_env, conda_key):
+def linux_shortcut(conda_env, conda_key, sh_file):
 
     # Need to update, skipping for now
 
-    to_write = "#!/bin/bash\n"+\
-               """set conda_base="{}"\n""".format(conda_env)+\
-               "set conda_key={}\n".format(conda_key)+\
+    # to_write = "#!user/bin/basenv bash\n"+\
+    #            """conda_base="{}"\n""".format(conda_env)+\
+    #            "conda_key={}\n".format(conda_key)+\
+    #            "\n\n"+\
+    #            "conda init\n"+\
+    #            "conda activate -p $conda_base\n"+\
+    #            "conda env list"+\
+    #            "\n\n"+\
+    #            "echo Launching PINGWizard\n"+\
+    #            "conda run ping python -m pingwizard\n"
+    to_write = "#!user/bin/basenv bash\n"+\
+               """conda_base="{}"\n""".format(conda_env)+\
+               "conda_key={}\n".format(conda_key)+\
                "\n\n"+\
-               "call conda activate %conda_base%\n"+\
-               "if ERRORLEVEL 1 (echo Error! Cannot load Conda environment.)\n"+\
-               "goto run_script\n\n"+\
-               ":run_script\n"+\
+               "conda init\n"+\
+               "\n\n"+\
                "echo Launching PINGWizard\n"+\
-               "python -m pingwizard\n"
+               "conda run ping python -m pingwizard\n"
+    
+    print('\n\n', to_write)
+
+    with open(sh_file, 'w') as f:
+        f.write(to_write)
 
     pass
 
@@ -54,14 +68,16 @@ def create_shortcut():
     print("Conda Key:\t\t", conda_key)
 
     bat_file_path = os.path.join(home_path, "Desktop", "Launch PINGWizard.bat")
+    sh_file_path = os.path.join(home_path, "Desktop", "Launch PINGWizard.sh")
 
-    if "Windows" in os.environ['OS']:
+    if "Windows" in platform.system():
         print("Creating Windows Shortcut")
         windows_shortcut(conda_env, conda_key, bat_file_path)
 
     else:
         print("Creating Linux Shortcut")
-        linux_shortcut(conda_env, conda_key)
+        conda_env = 'ping'
+        linux_shortcut(conda_env, conda_key, sh_file_path)
 
     pass
 
