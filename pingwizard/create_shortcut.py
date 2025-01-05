@@ -1,6 +1,7 @@
 
 import os, sys
 import platform
+import subprocess
 
 from pathlib import Path
 home_path = os.path.join(Path.home())
@@ -52,6 +53,10 @@ def linux_shortcut(conda_env, conda_key, sh_file):
 
     with open(sh_file, 'w') as f:
         f.write(to_write)
+
+    # Make executable
+    to_run = '''chmod u+x "{}"'''.format(sh_file)
+    subprocess.run(to_run, shell=True)
 
     pass
 
