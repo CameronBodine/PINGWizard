@@ -52,7 +52,7 @@ def create_shortcut():
     if "Windows" in platform.system():
         # Set conda_env and file_path
         conda_env = os.environ['CONDA_PREFIX']
-        file_path = os.path.join(home_path, "Desktop", "Launch PINGWizard.bat")
+        file_path = os.path.join(home_path, "Desktop", "PINGWizard.bat")
 
         windows_shortcut(conda_env=conda_env, f=file_path)
 
@@ -63,7 +63,7 @@ def create_shortcut():
         # Get Conda base path from ping environment path
         conda_base = conda_env.split('envs')[0]
 
-        file_path = os.path.join(home_path, "Desktop", "Launch PINGWizard.sh")
+        file_path = os.path.join(home_path, "Desktop", "PINGWizard.sh")
         linux_shortcut(conda_base=conda_base, f=file_path)
 
 
