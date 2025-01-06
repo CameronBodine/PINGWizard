@@ -34,19 +34,22 @@ def linux_shortcut(conda_base: str, f: str):
     
     print('\n\n', to_write)
 
-    with open(f, 'w') as f:
-        f.write(to_write)
+    with open(f, 'w') as file:
+        file.write(to_write)
 
     # Make executable
-    to_run = '''chmod +x "{}"'''.format(f)
-    subprocess.run(to_run, shell=True)
+    subprocess.run('''chmod u+x "{}"'''.format(f), shell=True)
+
+    # Print instructions
+    print('\n\nLaunch PINGWizard from the console by passing')
+    print(f)
+    print('OR')
+    print('./PINGWizard.sh')
+    print('after navigating console to Desktop.\n\n')
 
     pass
 
 def create_shortcut():
-
-    # Reset conda_env to be ping
-    conda_env = 'ping'
 
     # Make the file
     if "Windows" in platform.system():
