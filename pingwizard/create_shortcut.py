@@ -22,7 +22,7 @@ def windows_shortcut(conda_env: str, f: str):
 
     return
 
-def linux_shortcut(conda_base, sh_file):
+def linux_shortcut(conda_base: str, f: str):
 
     to_write = "#!/bin/bash\n"+\
                """conda_base="{}"\n""".format(conda_base)+\
@@ -64,7 +64,7 @@ def create_shortcut():
         conda_base = conda_env.split('envs')[0]
 
         file_path = os.path.join(home_path, "Desktop", "Launch PINGWizard.sh")
-        linux_shortcut(conda_env=conda_env, conda_base=conda_base, f=file_path)
+        linux_shortcut(conda_base=conda_base, f=file_path)
 
 
 if __name__ == "__main__":
