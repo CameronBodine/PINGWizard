@@ -34,11 +34,11 @@ def linux_shortcut(conda_base: str, f: str):
     
     print('\n\n', to_write)
 
-    with open(sh_file, 'w') as f:
+    with open(f, 'w') as f:
         f.write(to_write)
 
     # Make executable
-    to_run = '''chmod +x "{}"'''.format(sh_file)
+    to_run = '''chmod +x "{}"'''.format(f)
     subprocess.run(to_run, shell=True)
 
     pass
