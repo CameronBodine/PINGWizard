@@ -3,8 +3,8 @@ import os, sys
 import platform
 import subprocess
 
-from pathlib import Path
-home_path = os.path.join(Path.home())
+# Get user's home directory
+home_path = os.path.expanduser('~')
 
 def windows_shortcut(conda_base: str, conda_env: str, f: str):
 
