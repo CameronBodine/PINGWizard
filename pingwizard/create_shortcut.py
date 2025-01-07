@@ -66,12 +66,12 @@ def create_shortcut():
     # Make the file
     if "Windows" in platform.system():
         # Set file_path
-        file_path = os.path.join(home_path, "Desktop", "PINGWizard.bat")
+        file_path = os.path.join(home_path, "PINGWizard.bat")
         windows_shortcut(conda_base=conda_base, conda_env=conda_env, f=file_path)
 
     else:
         # Set file_path
-        file_path = os.path.join(home_path, "Desktop", "PINGWizard.sh")
+        file_path = os.path.join(home_path, "PINGWizard.sh")
         linux_shortcut(conda_base=conda_base, conda_env=conda_env, f=file_path)
 
 
