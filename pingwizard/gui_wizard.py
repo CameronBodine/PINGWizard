@@ -113,6 +113,10 @@ def wizard():
             module_args = ["test_large"]
 
         elif event == "pinginstaller":
+            # Update pinginstaller first
+            from pinginstaller.Install_Update_PINGMapper import update_pinginstaller
+            update_pinginstaller()
+
             print("Updating PINGMapper...")
             # Set the arguments for the PINGMapper Batch GUI
             module_name = "pinginstaller"
