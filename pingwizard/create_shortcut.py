@@ -63,8 +63,8 @@ def windows_shortcut(conda_base: str, conda_env: str, f: str):
                 
     print('\n\n', to_write)
 
-    with open(f, 'w') as f:
-        f.write(to_write)
+    with open(f, 'w') as file:
+        file.write(to_write)
 
     print('\n\nShortcut saved here:', f)
 
