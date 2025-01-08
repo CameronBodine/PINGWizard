@@ -22,8 +22,8 @@ def get_shortcut_location(home_p: str):
     ###################
     # Create simple gui
     title = sg.Text('Save shortcut at this location:')
-    path_input = sg.In(default_text=start_path, size=(80, 1))
-    path_browse = sg.FolderBrowse(key='shortcut_path', initial_folder=start_path)
+    path_input = sg.Input(key='shortcut_path', default_text=start_path, size=(80, 1))
+    path_browse = sg.FolderBrowse(initial_folder=start_path)
 
     layout = [
         [title],
