@@ -52,7 +52,7 @@ def get_shortcut_location(home_p: str):
 
 def windows_shortcut(conda_base: str, conda_env: str, f: str):
 
-    to_write = "set conda_base={}\n".format(conda_base)+\
+    to_write = """set conda_base="{}"\n""".format(conda_base)+\
                """set conda_env="{}"\n""".format(conda_env)+\
                "\n"+\
                '''call %conda_base%\\Scripts\\activate %conda_env%\n\n'''+\
