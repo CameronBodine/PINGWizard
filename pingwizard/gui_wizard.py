@@ -14,6 +14,10 @@ import PySimpleGUI as sg
 # Add 'pingmapper' to the path, may not need after pypi package...
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PACKAGE_DIR = os.path.dirname(SCRIPT_DIR)
+sys.path.append(PACKAGE_DIR)
+
+# Debug #
+sys.path.insert(0, r'Z:\UDEL\PythonRepos\PINGInstaller')  # For debugging only, remove for production
 
 # Logo's
 env_dir = os.environ['CONDA_PREFIX']
@@ -121,9 +125,9 @@ def wizard():
             module_args = ["test_large"]
 
         elif event == "pinginstaller":
-            # Update pinginstaller first
-            from pinginstaller.Install_Update import update_pinginstaller
-            update_pinginstaller()
+            # # Update pinginstaller first
+            # from pinginstaller.Install_Update import update_pinginstaller
+            # update_pinginstaller()
 
             print("Updating PINGMapper...")
             # Set the arguments for the PINGMapper Batch GUI
