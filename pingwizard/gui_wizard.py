@@ -16,9 +16,6 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PACKAGE_DIR = os.path.dirname(SCRIPT_DIR)
 sys.path.append(PACKAGE_DIR)
 
-# Debug #
-sys.path.insert(0, r'Z:\UDEL\PythonRepos\PINGInstaller')  # For debugging only, remove for production
-
 # Logo's
 env_dir = os.environ['CONDA_PREFIX']
 pingmapper_logo_name = "PINGMapper_Logo_small.png"
@@ -149,6 +146,11 @@ def wizard():
 
         window.Disappear()
         sys.argv = [module_name, *module_args]
+        
+        # Ensure environment is properly set for installer (mamba/conda detection)
+        # The installer relies on CONDA_PREFIX to find mamba
+        if 'CONDA_PREFIX' not in os.environ:
+            os.environ['CONDA_PREFIX'] = os.environ.get('CONDA_DEFAULT_ENV', '')
 
         runpy.run_module(module_name, run_name="__main__")
         time.sleep(1)
