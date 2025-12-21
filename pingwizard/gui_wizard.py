@@ -126,27 +126,43 @@ def wizard():
             module_args = ["test_large"]
 
         elif event == "pinginstaller":
-            # Update pinginstaller first to ensure latest installer is used
-            try:
-                from pinginstaller.Install_Update import update_pinginstaller
-                update_pinginstaller()
-            except Exception as e:
-                print(f"Warning: failed to update pinginstaller: {e}")
-
-            print("Updating PINGMapper...")
+            # Launch installer in a new window from base environment
+            # The ping environment must be closed to allow updates to proceed
+            print("\nStarting PINGMapper update...")
+            print("A new window will open to run the installer from base.")
+            print("The wizard will close to release environment locks.")
             
-            # Run installer in base environment to avoid file locking issues
-            # when updating from within the ping environment
             import subprocess
+            import tempfile
+            
             conda_base = os.environ.get('CONDA_PREFIX', '').split('envs')[0].rstrip(os.sep)
-            conda_exe = os.path.join(conda_base, 'Scripts', 'conda.exe')
+            conda_bat = os.path.join(conda_base, 'Scripts', 'conda.bat')
             
-            # Run pinginstaller via conda run in base environment
-            cmd = f'"{conda_exe}" run -n base python -m pinginstaller'
-            print(f"Running: {cmd}")
-            subprocess.run(cmd, shell=True)
+            # Create a temporary batch file to run the installer in a new window
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.bat', delete=False) as f:
+                f.write(f'''@echo off
+cd /d "{conda_base}"
+call "{conda_bat}" activate base
+python -m pinginstaller
+pause
+''')
+                batch_file = f.name
             
-            continue  # Skip the normal module execution below
+            # Launch the batch file in a new window
+            try:
+                subprocess.Popen(batch_file, creationflags=subprocess.CREATE_NEW_CONSOLE)
+                print("Installer window launched successfully.")
+                print("Closing PINGWizard...")
+                break  # Exit the wizard loop to close the application
+            except Exception as e:
+                print(f"Error launching installer: {e}")
+                print(f"Attempted to run: {batch_file}")
+                print("Please run 'python -m pinginstaller' manually from base environment.")
+                try:
+                    os.remove(batch_file)
+                except:
+                    pass
+                continue
 
         elif event == "check_updates":
             print("Checking for updates...")
