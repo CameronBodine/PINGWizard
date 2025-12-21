@@ -134,9 +134,19 @@ def wizard():
                 print(f"Warning: failed to update pinginstaller: {e}")
 
             print("Updating PINGMapper...")
-            # Set the arguments for the PINGMapper Batch GUI
-            module_name = "pinginstaller"
-            module_args = []
+            
+            # Run installer in base environment to avoid file locking issues
+            # when updating from within the ping environment
+            import subprocess
+            conda_base = os.environ.get('CONDA_PREFIX', '').split('envs')[0].rstrip(os.sep)
+            conda_exe = os.path.join(conda_base, 'Scripts', 'conda.exe')
+            
+            # Run pinginstaller via conda run in base environment
+            cmd = f'"{conda_exe}" run -n base python -m pinginstaller'
+            print(f"Running: {cmd}")
+            subprocess.run(cmd, shell=True)
+            
+            continue  # Skip the normal module execution below
 
         elif event == "check_updates":
             print("Checking for updates...")
