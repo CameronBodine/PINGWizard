@@ -141,11 +141,11 @@ def wizard():
             with tempfile.NamedTemporaryFile(mode='w', suffix='.bat', delete=False) as f:
                 # Use %~dp0 and direct paths to avoid quoting issues
                 f.write(f'''@echo off
-cd /d {conda_base}
-call {conda_base}\\Scripts\\conda.bat activate base
-python -m pinginstaller
-pause
-''')
+                        cd /d {conda_base}
+                        call {conda_base}\\Scripts\\conda.bat activate base
+                        python -m pinginstaller
+                        pause
+                        ''')
                 batch_file = f.name
             
             # Launch the batch file in a new window
