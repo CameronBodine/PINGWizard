@@ -30,6 +30,10 @@ def wizard():
 
     print("Welcome to the PING Wizard!")
 
+    # Default to debug verbosity for installer runs unless explicitly overridden
+    if 'PINGINSTALLER_VERBOSITY' not in os.environ:
+        os.environ['PINGINSTALLER_VERBOSITY'] = 'debug'
+
     # Save the original sys.argv
     original_argv = sys.argv
 
@@ -125,9 +129,12 @@ def wizard():
             module_args = ["test_large"]
 
         elif event == "pinginstaller":
-            # # Update pinginstaller first
-            # from pinginstaller.Install_Update import update_pinginstaller
-            # update_pinginstaller()
+            # Update pinginstaller first to ensure latest installer is used
+            try:
+                from pinginstaller.Install_Update import update_pinginstaller
+                update_pinginstaller()
+            except Exception as e:
+                print(f"Warning: failed to update pinginstaller: {e}")
 
             print("Updating PINGMapper...")
             # Set the arguments for the PINGMapper Batch GUI
