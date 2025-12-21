@@ -136,13 +136,13 @@ def wizard():
             import tempfile
             
             conda_base = os.environ.get('CONDA_PREFIX', '').split('envs')[0].rstrip(os.sep)
-            conda_bat = os.path.join(conda_base, 'Scripts', 'conda.bat')
             
             # Create a temporary batch file to run the installer in a new window
             with tempfile.NamedTemporaryFile(mode='w', suffix='.bat', delete=False) as f:
+                # Use %~dp0 and direct paths to avoid quoting issues
                 f.write(f'''@echo off
-cd /d "{conda_base}"
-call "{conda_bat}" activate base
+cd /d {conda_base}
+call {conda_base}\\Scripts\\conda.bat activate base
 python -m pinginstaller
 pause
 ''')
