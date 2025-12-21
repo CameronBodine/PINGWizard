@@ -150,9 +150,12 @@ pause
             
             # Launch the batch file in a new window
             try:
-                subprocess.Popen(batch_file, creationflags=subprocess.CREATE_NEW_CONSOLE)
+                # Use 'start' command to open in a new console window
+                subprocess.Popen(['cmd', '/c', 'start', 'cmd', '/k', batch_file])
                 print("Installer window launched successfully.")
-                print("Closing PINGWizard...")
+                print("Closing PINGWizard in 2 seconds...")
+                import time
+                time.sleep(2)  # Brief delay to ensure window opens
                 break  # Exit the wizard loop to close the application
             except Exception as e:
                 print(f"Error launching installer: {e}")
