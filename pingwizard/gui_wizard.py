@@ -142,13 +142,7 @@ def wizard():
                 f.write(f'''@echo off
 setlocal enabledelayedexpansion
 cd /d {conda_base}
-call {conda_base}\\Scripts\\conda.bat activate base
-if errorlevel 1 (
-    echo Failed to activate base environment
-    pause
-    exit /b 1
-)
-python -m pinginstaller
+"{conda_base}\\Scripts\\conda.bat" activate base && python -m pinginstaller
 pause
 ''')
                 batch_file = f.name
