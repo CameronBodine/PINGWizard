@@ -159,7 +159,7 @@ pause
                 subprocess.Popen(['cmd', '/c', 'start', 'cmd', '/k', batch_file])
                 print("Installer window launched successfully.")
                 print("Closing PINGWizard in 2 seconds...")
-                import time
+                
                 time.sleep(2)  # Brief delay to ensure window opens
                 break  # Exit the wizard loop to close the application
             except Exception as e:
