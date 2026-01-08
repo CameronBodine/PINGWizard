@@ -16,9 +16,6 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PACKAGE_DIR = os.path.dirname(SCRIPT_DIR)
 sys.path.append(PACKAGE_DIR)
 
-# Debug #
-sys.path.insert(0, r'Z:\UDEL\PythonRepos\PINGInstaller')  # For debugging only, remove for production
-
 # Logo's
 env_dir = os.environ['CONDA_PREFIX']
 pingmapper_logo_name = "PINGMapper_Logo_small.png"
@@ -29,6 +26,10 @@ if not os.path.isfile(pingmapper_logo):
 def wizard():
 
     print("Welcome to the PING Wizard!")
+
+    # Default to debug verbosity for installer runs unless explicitly overridden
+    if 'PINGINSTALLER_VERBOSITY' not in os.environ:
+        os.environ['PINGINSTALLER_VERBOSITY'] = 'debug'
 
     # Save the original sys.argv
     original_argv = sys.argv
@@ -125,14 +126,51 @@ def wizard():
             module_args = ["test_large"]
 
         elif event == "pinginstaller":
-            # # Update pinginstaller first
-            # from pinginstaller.Install_Update import update_pinginstaller
-            # update_pinginstaller()
-
-            print("Updating PINGMapper...")
-            # Set the arguments for the PINGMapper Batch GUI
-            module_name = "pinginstaller"
-            module_args = []
+            # Launch installer in a new window from base environment
+            # The ping environment must be closed to allow updates to proceed
+            print("\nStarting PINGMapper update...")
+            print("A new window will open to run the installer from base.")
+            print("The wizard will close to release environment locks.")
+            
+            import subprocess
+            import tempfile
+            
+            conda_base = os.environ.get('CONDA_PREFIX', '').split('envs')[0].rstrip(os.sep)
+            
+            # Create a temporary batch file to run the installer in a new window
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.bat', delete=False) as f:
+                f.write(f'''@echo off
+setlocal enabledelayedexpansion
+cd /d {conda_base}
+                   call {conda_base}\\condabin\\conda.bat activate base
+if errorlevel 1 (
+    echo Failed to activate base environment
+    pause
+    exit /b 1
+)
+python -m pinginstaller
+pause
+''')
+                batch_file = f.name
+            
+            # Launch the batch file in a new window
+            try:
+                # Use 'start' command to open in a new console window
+                subprocess.Popen(['cmd', '/c', 'start', 'cmd', '/k', batch_file])
+                print("Installer window launched successfully.")
+                print("Closing PINGWizard in 2 seconds...")
+                import time
+                time.sleep(2)  # Brief delay to ensure window opens
+                break  # Exit the wizard loop to close the application
+            except Exception as e:
+                print(f"Error launching installer: {e}")
+                print(f"Attempted to run: {batch_file}")
+                print("Please run 'python -m pinginstaller' manually from base environment.")
+                try:
+                    os.remove(batch_file)
+                except:
+                    pass
+                continue
 
         elif event == "check_updates":
             print("Checking for updates...")
@@ -142,6 +180,11 @@ def wizard():
 
         window.Disappear()
         sys.argv = [module_name, *module_args]
+        
+        # Ensure environment is properly set for installer (mamba/conda detection)
+        # The installer relies on CONDA_PREFIX to find mamba
+        if 'CONDA_PREFIX' not in os.environ:
+            os.environ['CONDA_PREFIX'] = os.environ.get('CONDA_DEFAULT_ENV', '')
 
         runpy.run_module(module_name, run_name="__main__")
         time.sleep(1)
