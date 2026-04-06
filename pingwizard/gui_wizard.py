@@ -13,7 +13,7 @@ try:
 # Import freesimplegui if available for better performance, otherwise fall back to PySimpleGUI
 except ImportError:
     try:
-        import freesimplegui as sg
+        import FreeSimpleGUI as sg
     except ImportError:
         print("Neither PySimpleGUI nor FreeSimpleGUI is installed. Please install one of these packages to run the PING Wizard.")
         sys.exit(1)
