@@ -1,7 +1,7 @@
 
 import sys, os
 import time
-import runpy
+import subprocess
 from pingwizard.version import __version__ as pwversion
 from pingwizard.check_available_updates import check
 
@@ -29,9 +29,6 @@ def wizard():
     # Default to debug verbosity for installer runs unless explicitly overridden
     if 'PINGINSTALLER_VERBOSITY' not in os.environ:
         os.environ['PINGINSTALLER_VERBOSITY'] = 'debug'
-
-    # Save the original sys.argv
-    original_argv = sys.argv
 
     ##########################
     # Define the layout blocks
@@ -89,15 +86,73 @@ def wizard():
 
     layout2 =[[sg.Column(layout, scrollable=True,  vertical_scroll_only=True, size_subsample_height=1)]]
     window = sg.Window('PING Wizard', layout2, resizable=True)
+    pre_minimize_state = {'state': 'normal'}
+
+    def _minimize_wizard(win):
+        # Force a repaint before blocking on subprocess so minimize is visible.
+        try:
+            win.refresh()
+        except Exception:
+            pass
+
+        try:
+            pre_minimize_state['state'] = win.TKroot.state()
+        except Exception:
+            pre_minimize_state['state'] = 'normal'
+
+        try:
+            win.minimize()
+        except Exception:
+            try:
+                win.TKroot.iconify()
+            except Exception:
+                win.Disappear()
+
+        # Give the window manager a moment to process minimize events.
+        time.sleep(0.1)
+
+    def _restore_wizard(win):
+        restored = False
+        try:
+            win.TKroot.deiconify()
+            win.Reappear()
+            win.TKroot.lift()
+            win.TKroot.focus_force()
+            restored = True
+        except Exception:
+            pass
+
+        if not restored:
+            try:
+                win.normal()
+                restored = True
+            except Exception:
+                pass
+
+        if not restored:
+            try:
+                win.Reappear()
+            except Exception:
+                pass
+
+        try:
+            win.refresh()
+        except Exception:
+            pass
 
 
     #################
     # Open the wizard
     while True:
-        event, values = window.read()
+        read_result = window.read()
+        if read_result is None:
+            break
+        event, values = read_result
         if event == "exit_pingwizard" or event == "Submit":
             break
-    
+
+        module_name = None
+        module_args = []
 
         # Launch PINGMapper GUI
         if event == "launch_pingmapper_gui":
@@ -131,7 +186,6 @@ def wizard():
             print("A new window will open to run the installer from base.")
             print("The wizard will close to release environment locks.")
             
-            import subprocess
             import tempfile
             
             conda_base = os.environ.get('CONDA_PREFIX', '').split('envs')[0].rstrip(os.sep)
@@ -177,17 +231,20 @@ pause
             module_name = "pinginstaller"
             module_args = ["check"]
 
-        window.Disappear()
-        sys.argv = [module_name, *module_args]
-        
-        # Ensure environment is properly set for installer (mamba/conda detection)
-        # The installer relies on CONDA_PREFIX to find mamba
-        if 'CONDA_PREFIX' not in os.environ:
-            os.environ['CONDA_PREFIX'] = os.environ.get('CONDA_DEFAULT_ENV', '')
+        # Ignore non-launch events so the wizard does not re-minimize/relaunch unexpectedly.
+        if module_name is None:
+            continue
 
-        runpy.run_module(module_name, run_name="__main__")
-        time.sleep(1)
-        window.Reappear()
+        _minimize_wizard(window)
+        try:
+            # Run the selected module in a child process to avoid GUI state conflicts.
+            cmd = [sys.executable, '-m', module_name, *module_args]
+            result = subprocess.run(cmd, env=os.environ.copy())
+            if result.returncode != 0:
+                print(f"Warning: {module_name} exited with code {result.returncode}")
+        finally:
+            time.sleep(1)
+            _restore_wizard(window)
 
     # window.close()
 
